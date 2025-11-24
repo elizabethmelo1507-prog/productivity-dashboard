@@ -170,6 +170,7 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
         <BottomNavItem icon="account_balance_wallet" label="Finanças" path="/expenses" active={isActive('/expenses')} />
         <BottomNavItem icon="event" label="Calendário" path="/calendar" active={isActive('/calendar')} />
         <BottomNavItem icon="analytics" label="Relatórios" path="/reports" active={isActive('/reports')} />
+        <BottomNavItem icon="settings" label="Ajustes" path="/settings" active={isActive('/settings')} />
       </nav>
     </div>
   );
