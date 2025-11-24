@@ -1,10 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import { Responsive, WidthProvider } from 'react-grid-layout';
-import 'react-grid-layout/css/styles.css';
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface ProductivityData {
   name: string;
@@ -137,98 +133,22 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
   const [dragOverWidget, setDragOverWidget] = useState<string | null>(null);
 
-  // Grid Layout state - SIMPLIFIED AND FIXED
-  // Each widget has exact X,Y position to prevent overlaps
-  const getDefaultLayout = () => [
-    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2, minH: 2, minW: 6 },
-    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4, minH: 4, minW: 4 },
-    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4, minH: 4, minW: 4 },
-    { i: 'agenda', x: 0, y: 6, w: 6, h: 4, minH: 4, minW: 4 },
-    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4, minH: 4, minW: 4 },
-    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3, minH: 3, minW: 4 },
-    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3, minH: 3, minW: 4 },
-    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4, minH: 4, minW: 4 },
-    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 4, minH: 4, minW: 4 },
-    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4, minW: 4 },
-    { i: 'streak', x: 6, y: 17, w: 6, h: 3, minH: 3, minW: 4 },
-    { i: 'weeklyProgress', x: 0, y: 20, w: 6, h: 4, minH: 4, minW: 4 },
-    { i: 'weather', x: 6, y: 20, w: 6, h: 3, minH: 3, minW: 4 },
-    { i: 'quickNotes', x: 0, y: 23, w: 6, h: 3, minH: 3, minW: 4 },
-    { i: 'achievements', x: 6, y: 23, w: 6, h: 4, minH: 4, minW: 4 },
-  ];
 
-  // ALWAYS start with default layout - no localStorage on initialization
-  const [layout, setLayout] = useState(getDefaultLayout());
-  const [isLayoutLoaded, setIsLayoutLoaded] = useState(false);
-
-  // Load custom layout AFTER initial render
+  // Clean up old layout versions once (não mais necessário mas mantido para limpar versões antigas)
   useEffect(() => {
-    if (isLayoutLoaded) return;
-
-    try {
-      const saved = localStorage.getItem('widgetLayout_v10');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-
-        // Validate: ensure no overlaps
-        const positions = new Map();
-        let isValid = true;
-
-        for (const item of parsed) {
-          const key = `${item.x}-${item.y}`;
-          if (positions.has(key)) {
-            console.error(`Invalid layout: overlap at ${key}`);
-            isValid = false;
-            break;
-          }
-          positions.set(key, item.i);
-        }
-
-        if (isValid && parsed.length === getDefaultLayout().length) {
-          console.log('Loading saved layout');
-          setLayout(parsed);
-        } else {
-          console.warn('Saved layout invalid, using default');
-          localStorage.removeItem('widgetLayout_v10');
-        }
-      }
-    } catch (e) {
-      console.error('Error loading layout:', e);
-    }
-
-    setIsLayoutLoaded(true);
-  }, [isLayoutLoaded]);
-
-  // Save layout when it changes (debounced)
-  const handleLayoutChange = async (newLayout: any) => {
-    if (!isLayoutLoaded) return; // Don't save during initial load
-
-    setLayout(newLayout);
-    localStorage.setItem('widgetLayout_v10', JSON.stringify(newLayout));
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await updateProfile(user.id, { dashboard_layout: newLayout });
-      }
-    } catch (error) {
-      console.error('Error saving layout:', error);
-    }
-  };
-
-  // Clean up old versions once
-  useEffect(() => {
-    const cleanupDone = localStorage.getItem('layout_cleanup_v10');
+    const cleanupDone = localStorage.getItem('layout_cleanup_final');
     if (!cleanupDone) {
-      console.log('Cleaning up old layouts...');
+      console.log('Cleaning up ALL old grid layouts - now using CSS Grid');
       ['widgetLayout_v1', 'widgetLayout_v2', 'widgetLayout_v3', 'widgetLayout_v4',
         'widgetLayout_v5', 'widgetLayout_v6', 'widgetLayout_v7', 'widgetLayout_v8',
-        'widgetLayout_v9', 'widgetLayout', 'dashboardLayout', 'widgetLayoutVersion'].forEach(key => {
+        'widgetLayout_v9', 'widgetLayout_v10', 'widgetLayout', 'dashboardLayout',
+        'widgetLayoutVersion', 'layout_cleanup_v10'].forEach(key => {
           localStorage.removeItem(key);
         });
-      localStorage.setItem('layout_cleanup_v10', 'done');
+      localStorage.setItem('layout_cleanup_final', 'done');
     }
   }, []);
+
 
   // Listen for changes in widget preferences
   useEffect(() => {
@@ -983,16 +903,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
 
           <button
             onClick={() => {
-              if (window.confirm('Deseja restaurar o layout padrão? Isso irá reorganizar todos os widgets.')) {
-                // Clear all layout versions
-                ['widgetLayout_v1', 'widgetLayout_v2', 'widgetLayout_v3', 'widgetLayout_v4',
-                  'widgetLayout_v5', 'widgetLayout_v6', 'widgetLayout_v7', 'widgetLayout_v8',
-                  'widgetLayout_v9', 'widgetLayout_v10'].forEach(key => {
-                    localStorage.removeItem(key);
-                  });
-                const freshLayout = getDefaultLayout();
-                setLayout([...freshLayout]);
-                localStorage.setItem('widgetLayout_v10', JSON.stringify(freshLayout));
+              if (window.confirm('Deseja limpar as preferências e recarregar?')) {
+                localStorage.clear();
                 window.location.reload();
               }
             }}
@@ -1018,27 +930,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           </button>
         </div>
       ) : (
-        <ResponsiveGridLayout
-          className="layout"
-          layouts={{
-            lg: layout,
-            md: layout,
-            sm: layout,
-            xs: layout,
-            xxs: layout
-          }}
-          breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 480, xxs: 0 }}
-          cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
-          rowHeight={80}
-          onLayoutChange={(newLayout) => {
-            handleLayoutChange(newLayout);
-          }}
-          isDraggable={true}
-          isResizable={true}
-          draggableHandle=".drag-handle"
-          measureBeforeMount={true}
-          useCSSTransforms={true}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+
 
           {/* Urgent Banner */}
           {enabledWidgets.urgentBanner && (
@@ -1700,7 +1593,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
             </div>
           )}
 
-        </ResponsiveGridLayout>
+        </div>
       )
       }
     </div >
