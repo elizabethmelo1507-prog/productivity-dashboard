@@ -166,14 +166,10 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface-dark border-t border-border-dark h-16 flex items-center justify-around z-30 safe-area-bottom">
         <BottomNavItem icon="home" label="Início" path="/" active={isActive('/')} />
+        <BottomNavItem icon="check_circle" label="Tarefas" path="/tasks" active={isActive('/tasks')} />
         <BottomNavItem icon="account_balance_wallet" label="Finanças" path="/expenses" active={isActive('/expenses')} />
-        <div className="relative -top-5">
-          <button className="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-4 border-background-dark">
-            <span className="material-icons-outlined text-2xl">add</span>
-          </button>
-        </div>
         <BottomNavItem icon="event" label="Calendário" path="/calendar" active={isActive('/calendar')} />
-        <BottomNavItem icon="settings" label="Ajustes" path="/settings" active={isActive('/settings')} />
+        <BottomNavItem icon="analytics" label="Relatórios" path="/reports" active={isActive('/reports')} />
       </nav>
     </div>
   );
