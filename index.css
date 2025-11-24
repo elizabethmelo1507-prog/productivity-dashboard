@@ -194,8 +194,15 @@ body,
         position: relative !important;
         transform: none !important;
         width: 100% !important;
+        height: auto !important;
+        min-height: fit-content !important;
         margin-left: 0 !important;
         margin-bottom: 1rem !important;
+    }
+
+    .react-grid-item>* {
+        height: 100% !important;
+        min-height: fit-content !important;
     }
 
     .react-grid-item.react-grid-placeholder {
