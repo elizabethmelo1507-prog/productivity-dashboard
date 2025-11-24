@@ -820,7 +820,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Erro API (${response.status}): ${errorData.error?.message || response.statusText}`);
       }
 
       const data = await response.json();
@@ -828,9 +829,15 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
 
       const aiMsg: Message = { id: Date.now() + 1, role: 'ai', text: aiResponseText };
       setChatMessages(prev => [...prev, aiMsg]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro na IA:", error);
-      const errorMsg: Message = { id: Date.now() + 1, role: 'ai', text: "Tive um problema de conexão. Poderia repetir?" };
+      // Show the actual error to help debugging
+      const errorMessage = error.message || "Erro desconhecido";
+      const errorMsg: Message = {
+        id: Date.now() + 1,
+        role: 'ai',
+        text: `⚠️ Erro técnico: ${errorMessage}. Verifique se a chave API é válida e se tem permissões.`
+      };
       setChatMessages(prev => [...prev, errorMsg]);
     } finally {
       setIsAiTyping(false);
