@@ -158,7 +158,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   ];
 
   const [layout, setLayout] = useState(() => {
-    const saved = localStorage.getItem('widgetLayout_v2');
+    const saved = localStorage.getItem('widgetLayout_v3');
     if (saved) {
       const parsedSaved = JSON.parse(saved);
       // Merge saved layout with default layout to ensure all widgets have a position
@@ -175,7 +175,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   // Save layout when it changes
   const handleLayoutChange = async (newLayout: any) => {
     setLayout(newLayout);
-    localStorage.setItem('widgetLayout_v2', JSON.stringify(newLayout));
+    localStorage.setItem('widgetLayout_v3', JSON.stringify(newLayout));
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -928,7 +928,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
             onClick={() => {
               if (window.confirm('Deseja restaurar o layout padrão?')) {
                 setLayout(defaultLayout);
-                localStorage.removeItem('widgetLayout_v2');
+                localStorage.removeItem('widgetLayout_v3');
                 window.location.reload();
               }
             }}
@@ -976,6 +976,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           isResizable={window.innerWidth >= 1024}
           compactType="vertical"
           draggableHandle=".drag-handle"
+          measureBeforeMount={true}
+          useCSSTransforms={true}
         >
 
           {/* Urgent Banner */}
