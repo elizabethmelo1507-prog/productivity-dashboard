@@ -959,7 +959,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
 
           layouts={{
             lg: layout,
-            md: layout.map(item => ({ ...item, x: 0, w: 12 })),
+            md: layout,
             sm: layout.map(item => ({ ...item, x: 0, w: 12 })),
             xs: layout.map(item => ({ ...item, x: 0, w: 12 })),
             xxs: layout.map(item => ({ ...item, x: 0, w: 12 }))
@@ -968,12 +968,12 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
           rowHeight={80}
           onLayoutChange={(newLayout) => {
-            if (window.innerWidth >= 1024) {
+            if (window.innerWidth >= 768) {
               handleLayoutChange(newLayout);
             }
           }}
-          isDraggable={window.innerWidth >= 1024}
-          isResizable={window.innerWidth >= 1024}
+          isDraggable={window.innerWidth >= 768}
+          isResizable={window.innerWidth >= 768}
           compactType="vertical"
           draggableHandle=".drag-handle"
           measureBeforeMount={true}
