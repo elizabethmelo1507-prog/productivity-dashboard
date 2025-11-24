@@ -139,25 +139,25 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
 
   // Grid Layout state - defines position and size of each widget
   const defaultLayout = [
-    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2 },
-    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4 },
-    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4 },
-    { i: 'agenda', x: 0, y: 6, w: 6, h: 4 },
-    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4 },
-    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3 },
-    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3 },
-    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4 },
-    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 4 },
-    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 3 },
-    { i: 'streak', x: 6, y: 17, w: 3, h: 3 },
-    { i: 'weeklyProgress', x: 9, y: 17, w: 3, h: 4 },
-    { i: 'weather', x: 0, y: 20, w: 3, h: 3 },
-    { i: 'quickNotes', x: 3, y: 20, w: 6, h: 3 },
-    { i: 'achievements', x: 9, y: 21, w: 3, h: 4 },
+    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2, minH: 2 },
+    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4, minH: 4 },
+    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4, minH: 4 },
+    { i: 'agenda', x: 0, y: 6, w: 6, h: 4, minH: 4 },
+    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4, minH: 4 },
+    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3, minH: 3 },
+    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3, minH: 3 },
+    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4, minH: 4 },
+    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 3, minH: 3 },
+    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4 },
+    { i: 'streak', x: 6, y: 17, w: 3, h: 3, minH: 3 },
+    { i: 'weeklyProgress', x: 9, y: 17, w: 3, h: 4, minH: 4 },
+    { i: 'weather', x: 0, y: 20, w: 3, h: 3, minH: 3 },
+    { i: 'quickNotes', x: 3, y: 20, w: 6, h: 3, minH: 3 },
+    { i: 'achievements', x: 9, y: 21, w: 3, h: 4, minH: 4 },
   ];
 
   const [layout, setLayout] = useState(() => {
-    const saved = localStorage.getItem('widgetLayout_v3');
+    const saved = localStorage.getItem('widgetLayout_v4');
     if (saved) {
       const parsedSaved = JSON.parse(saved);
       // Merge saved layout with default layout to ensure all widgets have a position
@@ -174,7 +174,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   // Save layout when it changes
   const handleLayoutChange = async (newLayout: any) => {
     setLayout(newLayout);
-    localStorage.setItem('widgetLayout_v3', JSON.stringify(newLayout));
+    localStorage.setItem('widgetLayout_v4', JSON.stringify(newLayout));
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
