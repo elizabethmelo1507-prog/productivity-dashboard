@@ -199,8 +199,8 @@ body,
     }
 
     .react-grid-item {
-        position: static !important;
-        /* Let library set absolute positioning */
+        position: absolute !important;
+        /* Let library control size and placement */
         width: auto !important;
         height: auto !important;
         transform: none !important;
@@ -209,11 +209,7 @@ body,
         margin: 0 !important;
     }
 
-    .react-grid-item>div {
-        width: 100% !important;
-        height: 100% !important;
-        grid-column: auto !important;
-    }
+
 }
 
 .react-grid-item.react-draggable-dragging {
