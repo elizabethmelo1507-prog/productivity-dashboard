@@ -1347,130 +1347,126 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
 
           {/* Daily Goal Widget */}
           {enabledWidgets.dailyGoal && (
-            <div key="dailyGoal" className="col-span-1 lg:col-span-2">
-              <div className="bg-surface-dark p-4 rounded-2xl border border-border-dark flex flex-col h-full">
-                <div className="flex items-center justify-between mb-2 flex-shrink-0 drag-handle cursor-move">
-                  <h3 className="font-bold text-lg text-text-dark flex items-center gap-2">
-                    <span className="material-icons-outlined text-primary">flag</span>
-                    META DO DIA
-                  </h3>
-                  {!isEditingGoal && dailyGoal && (
-                    <button
-                      onClick={() => {
-                        setIsEditingGoal(true);
-                        setGoalInput(dailyGoal);
-                      }}
-                      className="text-subtext-dark hover:text-primary transition-colors"
-                    >
-                      <span className="material-icons-outlined text-sm">edit</span>
-                    </button>
-                  )}
-                </div>
-                {isEditingGoal || !dailyGoal ? (
-                  <div className="flex flex-col flex-1 min-h-0 justify-center gap-2">
-                    <input
-                      type="text"
-                      value={goalInput}
-                      onChange={(e) => setGoalInput(e.target.value)}
-                      placeholder="Digite sua meta..."
-                      className="w-full px-3 py-2 bg-background-dark border border-border-dark rounded-xl text-text-dark placeholder-subtext-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
-                      autoFocus
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setDailyGoal(goalInput);
-                          localStorage.setItem('dailyGoal', goalInput);
-                          setIsEditingGoal(false);
-                        }}
-                        className="flex-1 bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors text-xs uppercase tracking-wide"
-                      >
-                        Salvar
-                      </button>
-                      {dailyGoal && (
-                        <button
-                          onClick={() => {
-                            setIsEditingGoal(false);
-                            setGoalInput(dailyGoal);
-                          }}
-                          className="px-3 py-1.5 bg-background-dark hover:bg-border-dark text-text-dark rounded-lg transition-colors text-xs uppercase tracking-wide"
-                        >
-                          Cancelar
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-background-dark p-3 rounded-xl flex-1 flex flex-col justify-center items-center text-center min-h-0">
-                    <p className="text-text-dark text-base font-medium line-clamp-2">{dailyGoal}</p>
-                    <button
-                      onClick={() => {
-                        setDailyGoal('');
-                        localStorage.removeItem('dailyGoal');
-                      }}
-                      className="mt-2 text-xs text-chart-green hover:text-chart-green/80 font-semibold flex items-center gap-1"
-                    >
-                      <span className="material-icons-outlined text-sm">check_circle</span>
-                      Concluir
-                    </button>
-                  </div>
+            <div key="dailyGoal" className="bg-surface-dark p-4 rounded-2xl border border-border-dark flex flex-col h-full">
+              <div className="flex items-center justify-between mb-2 flex-shrink-0 drag-handle cursor-move">
+                <h3 className="font-bold text-lg text-text-dark flex items-center gap-2">
+                  <span className="material-icons-outlined text-primary">flag</span>
+                  META DO DIA
+                </h3>
+                {!isEditingGoal && dailyGoal && (
+                  <button
+                    onClick={() => {
+                      setIsEditingGoal(true);
+                      setGoalInput(dailyGoal);
+                    }}
+                    className="text-subtext-dark hover:text-primary transition-colors"
+                  >
+                    <span className="material-icons-outlined text-sm">edit</span>
+                  </button>
                 )}
               </div>
+              {isEditingGoal || !dailyGoal ? (
+                <div className="flex flex-col flex-1 min-h-0 justify-center gap-2">
+                  <input
+                    type="text"
+                    value={goalInput}
+                    onChange={(e) => setGoalInput(e.target.value)}
+                    placeholder="Digite sua meta..."
+                    className="w-full px-3 py-2 bg-background-dark border border-border-dark rounded-xl text-text-dark placeholder-subtext-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+                    autoFocus
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setDailyGoal(goalInput);
+                        localStorage.setItem('dailyGoal', goalInput);
+                        setIsEditingGoal(false);
+                      }}
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors text-xs uppercase tracking-wide"
+                    >
+                      Salvar
+                    </button>
+                    {dailyGoal && (
+                      <button
+                        onClick={() => {
+                          setIsEditingGoal(false);
+                          setGoalInput(dailyGoal);
+                        }}
+                        className="px-3 py-1.5 bg-background-dark hover:bg-border-dark text-text-dark rounded-lg transition-colors text-xs uppercase tracking-wide"
+                      >
+                        Cancelar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-background-dark p-3 rounded-xl flex-1 flex flex-col justify-center items-center text-center min-h-0">
+                  <p className="text-text-dark text-base font-medium line-clamp-2">{dailyGoal}</p>
+                  <button
+                    onClick={() => {
+                      setDailyGoal('');
+                      localStorage.removeItem('dailyGoal');
+                    }}
+                    className="mt-2 text-xs text-chart-green hover:text-chart-green/80 font-semibold flex items-center gap-1"
+                  >
+                    <span className="material-icons-outlined text-sm">check_circle</span>
+                    Concluir
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
           {/* Pomodoro Timer Widget */}
           {enabledWidgets.pomodoroTimer && (
-            <div key="pomodoroTimer" className="col-span-1 lg:col-span-2">
-              <div className="bg-gradient-to-br from-chart-red to-primary p-6 rounded-2xl shadow-lg text-white relative overflow-hidden h-full">
-                <div className="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-8 -mt-8 blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-4 drag-handle cursor-move">
-                    <h3 className="font-bold text-xl flex items-center gap-2">
-                      <span className="material-icons-outlined">timer</span>
-                      POMODORO
-                    </h3>
-                    <span className="text-sm bg-white/20 px-3 py-1 rounded-full">
-                      {pomodoroMode === 'work' ? 'Foco' : 'Pausa'}
+            <div key="pomodoroTimer" className="bg-gradient-to-br from-chart-red to-primary p-6 rounded-2xl shadow-lg text-white relative overflow-hidden h-full">
+              <div className="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-8 -mt-8 blur-2xl"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4 drag-handle cursor-move">
+                  <h3 className="font-bold text-xl flex items-center gap-2">
+                    <span className="material-icons-outlined">timer</span>
+                    POMODORO
+                  </h3>
+                  <span className="text-sm bg-white/20 px-3 py-1 rounded-full">
+                    {pomodoroMode === 'work' ? 'Foco' : 'Pausa'}
+                  </span>
+                </div>
+                <div className="text-center my-6">
+                  <div className="text-6xl font-bold mb-2">
+                    {Math.floor(pomodoroTime / 60)}:{(pomodoroTime % 60).toString().padStart(2, '0')}
+                  </div>
+                  <p className="text-white/70 text-sm">
+                    {pomodoroMode === 'work' ? '25 minutos de foco intenso' : '5 minutos de descanso'}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setIsPomodoroRunning(!isPomodoroRunning)}
+                    className="flex-1 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                  >
+                    <span className="material-icons-outlined">
+                      {isPomodoroRunning ? 'pause' : 'play_arrow'}
                     </span>
-                  </div>
-                  <div className="text-center my-6">
-                    <div className="text-6xl font-bold mb-2">
-                      {Math.floor(pomodoroTime / 60)}:{(pomodoroTime % 60).toString().padStart(2, '0')}
-                    </div>
-                    <p className="text-white/70 text-sm">
-                      {pomodoroMode === 'work' ? '25 minutos de foco intenso' : '5 minutos de descanso'}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setIsPomodoroRunning(!isPomodoroRunning)}
-                      className="flex-1 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                    >
-                      <span className="material-icons-outlined">
-                        {isPomodoroRunning ? 'pause' : 'play_arrow'}
-                      </span>
-                      {isPomodoroRunning ? 'Pausar' : 'Iniciar'}
-                    </button>
-                    <button
-                      onClick={async () => {
-                        // Save incomplete session if work mode and timer was running
-                        if (pomodoroMode === 'work' && pomodoroStartTime !== null && isPomodoroRunning) {
-                          const elapsedSeconds = Math.floor((Date.now() - pomodoroStartTime) / 1000);
-                          const elapsedMinutes = Math.floor(elapsedSeconds / 60);
-                          if (elapsedMinutes > 0) {
-                            await savePomodoroSession(elapsedMinutes, false);
-                          }
+                    {isPomodoroRunning ? 'Pausar' : 'Iniciar'}
+                  </button>
+                  <button
+                    onClick={async () => {
+                      // Save incomplete session if work mode and timer was running
+                      if (pomodoroMode === 'work' && pomodoroStartTime !== null && isPomodoroRunning) {
+                        const elapsedSeconds = Math.floor((Date.now() - pomodoroStartTime) / 1000);
+                        const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+                        if (elapsedMinutes > 0) {
+                          await savePomodoroSession(elapsedMinutes, false);
                         }
-                        setIsPomodoroRunning(false);
-                        setPomodoroTime(pomodoroMode === 'work' ? 25 * 60 : 5 * 60);
-                        setPomodoroStartTime(null);
-                      }}
-                      className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-3 rounded-lg transition-colors"
-                    >
-                      <span className="material-icons-outlined">refresh</span>
-                    </button>
-                  </div>
+                      }
+                      setIsPomodoroRunning(false);
+                      setPomodoroTime(pomodoroMode === 'work' ? 25 * 60 : 5 * 60);
+                      setPomodoroStartTime(null);
+                    }}
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-3 rounded-lg transition-colors"
+                  >
+                    <span className="material-icons-outlined">refresh</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1610,7 +1606,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           )}
 
         </ResponsiveGridLayout>
-      )}
+      )
+      }
     </div >
   );
 };
