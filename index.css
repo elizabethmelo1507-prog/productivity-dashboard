@@ -192,46 +192,22 @@ body,
     }
 }
 
-/* Desktop Grid Layout - Reset to let react-grid-layout handle positioning */
-@media (min-width: 1024px) {
-    .react-grid-layout {
-        position: relative;
-    }
-
-    .react-grid-item {
-        position: absolute !important;
-        /* Let library control size and placement */
-        width: auto !important;
-        height: auto !important;
-        transform: none !important;
-        left: auto !important;
-        top: auto !important;
-        margin: 0 !important;
-    }
-
-
+/* Desktop Grid Layout - Standard RGL styles */
+.react-grid-item.react-grid-placeholder {
+    background: rgba(139, 92, 246, 0.2) !important;
+    opacity: 0.5 !important;
+    border-radius: 1rem;
+    z-index: 2;
 }
 
 .react-grid-item.react-draggable-dragging {
     transition: none;
     z-index: 100;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .react-grid-item.dropping {
     visibility: hidden;
-}
-
-.react-grid-item.react-grid-placeholder {
-    background: rgba(139, 92, 246, 0.2);
-    opacity: 0.2;
-    transition-duration: 100ms;
-    z-index: 2;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-}
 }
 
 /* Mobile Grid Layout Fix */
