@@ -157,7 +157,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   ];
 
   const [layout, setLayout] = useState(() => {
-    const saved = localStorage.getItem('widgetLayout_v5');
+    const saved = localStorage.getItem('widgetLayout_v6');
     if (saved) {
       const parsedSaved = JSON.parse(saved);
       // Merge saved layout with default layout to ensure all widgets have a position
@@ -174,7 +174,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   // Save layout when it changes
   const handleLayoutChange = async (newLayout: any) => {
     setLayout(newLayout);
-    localStorage.setItem('widgetLayout_v5', JSON.stringify(newLayout));
+    localStorage.setItem('widgetLayout_v6', JSON.stringify(newLayout));
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -187,7 +187,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   };
 
   useEffect(() => {
-    localStorage.setItem('widgetLayout_v5', JSON.stringify(layout));
+    localStorage.setItem('widgetLayout_v6', JSON.stringify(layout));
   }, [layout]);
 
   // Listen for changes in widget preferences
@@ -978,19 +978,17 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
             lg: layout,
             md: layout,
             sm: layout,
-            xs: layout.map(item => ({ ...item, x: 0, w: 12 })),
-            xxs: layout.map(item => ({ ...item, x: 0, w: 12 }))
+            xs: layout,
+            xxs: layout
           }}
           breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 480, xxs: 0 }}
           cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
           rowHeight={80}
           onLayoutChange={(newLayout) => {
-            if (window.innerWidth >= 640) {
-              handleLayoutChange(newLayout);
-            }
+            handleLayoutChange(newLayout);
           }}
-          isDraggable={window.innerWidth >= 640}
-          isResizable={window.innerWidth >= 640}
+          isDraggable={true}
+          isResizable={true}
           compactType="vertical"
           draggableHandle=".drag-handle"
           measureBeforeMount={true}
