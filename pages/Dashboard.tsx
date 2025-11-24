@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
-import GridLayout, { WidthProvider } from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 
-const ResponsiveGridLayout = WidthProvider(GridLayout);
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface ProductivityData {
   name: string;
