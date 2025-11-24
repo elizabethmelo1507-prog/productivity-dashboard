@@ -951,8 +951,6 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
         </div>
       ) : (
         <ResponsiveGridLayout
-          className="layout"
-          style={{ width: '100%', marginLeft: 0 }}
           layouts={{
             lg: layout,
             md: layout,
