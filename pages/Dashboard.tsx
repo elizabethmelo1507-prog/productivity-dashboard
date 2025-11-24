@@ -148,17 +148,17 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
     { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3 },
     { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3 },
     { i: 'quickStats', x: 0, y: 13, w: 6, h: 4 },
-    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 3 },
+    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 4 },
     { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 3 },
     { i: 'streak', x: 6, y: 17, w: 3, h: 3 },
     { i: 'weeklyProgress', x: 9, y: 17, w: 3, h: 4 },
     { i: 'weather', x: 0, y: 20, w: 3, h: 3 },
     { i: 'quickNotes', x: 3, y: 20, w: 6, h: 3 },
-    { i: 'achievements', x: 9, y: 20, w: 3, h: 4 },
+    { i: 'achievements', x: 9, y: 21, w: 3, h: 4 },
   ];
 
   const [layout, setLayout] = useState(() => {
-    const saved = localStorage.getItem('widgetLayout');
+    const saved = localStorage.getItem('widgetLayout_v2');
     if (saved) {
       const parsedSaved = JSON.parse(saved);
       // Merge saved layout with default layout to ensure all widgets have a position
@@ -173,9 +173,9 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   });
 
   // Save layout when it changes
-  const onLayoutChange = async (newLayout: any) => {
+  const handleLayoutChange = async (newLayout: any) => {
     setLayout(newLayout);
-    localStorage.setItem('widgetLayout', JSON.stringify(newLayout));
+    localStorage.setItem('widgetLayout_v2', JSON.stringify(newLayout));
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -186,6 +186,10 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
       console.error('Error saving layout:', error);
     }
   };
+
+  // ... later in JSX ...
+  // inside <ResponsiveGridLayout>
+  // replace onLayoutChange prop usage
 
   // Listen for changes in widget preferences
   useEffect(() => {
@@ -924,7 +928,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
             onClick={() => {
               if (window.confirm('Deseja restaurar o layout padrão?')) {
                 setLayout(defaultLayout);
-                localStorage.removeItem('widgetLayout');
+                localStorage.removeItem('widgetLayout_v2');
                 window.location.reload();
               }
             }}
@@ -952,7 +956,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
       ) : (
         <ResponsiveGridLayout
           className="layout"
-          layout={layout}
+
           layouts={{
             lg: layout,
             md: layout,
@@ -963,16 +967,15 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 480, xxs: 0 }}
           cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
           rowHeight={80}
-          onLayoutChange={(newLayout, allLayouts) => {
-            // Only save layout changes for desktop
+          onLayoutChange={(newLayout) => {
             if (window.innerWidth >= 1024) {
-              onLayoutChange(newLayout);
+              handleLayoutChange(newLayout);
             }
           }}
           isDraggable={window.innerWidth >= 1024}
           isResizable={window.innerWidth >= 1024}
-          compactType="vertical"
-          preventCollision={false}
+          compactType={null}
+          preventCollision={true}
           draggableHandle=".drag-handle"
         >
 
