@@ -138,30 +138,30 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   const [dragOverWidget, setDragOverWidget] = useState<string | null>(null);
 
   // Grid Layout state - defines position and size of each widget
+  // Organized in 2 columns (6 grid units each) to prevent overlapping
   const defaultLayout = [
-    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2, minH: 2, minW: 3 },
-    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4, minH: 4, minW: 3 },
-    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4, minH: 4, minW: 3 },
-    { i: 'agenda', x: 0, y: 6, w: 6, h: 4, minH: 4, minW: 3 },
-    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4, minH: 4, minW: 3 },
-    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3, minH: 3, minW: 3 },
-    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3, minH: 3, minW: 3 },
-    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4, minH: 4, minW: 3 },
-    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 3, minH: 3, minW: 3 },
-    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4, minW: 3 },
-    { i: 'streak', x: 6, y: 17, w: 3, h: 3, minH: 3, minW: 3 },
-    { i: 'weeklyProgress', x: 9, y: 17, w: 3, h: 4, minH: 4, minW: 3 },
-    { i: 'weather', x: 0, y: 20, w: 3, h: 3, minH: 3, minW: 3 },
-    { i: 'quickNotes', x: 3, y: 20, w: 6, h: 3, minH: 3, minW: 3 },
-    { i: 'achievements', x: 9, y: 21, w: 3, h: 4, minH: 4, minW: 3 },
+    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2, minH: 2, minW: 6, static: false },
+    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'agenda', x: 0, y: 6, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3, minH: 3, minW: 3, static: false },
+    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3, minH: 3, minW: 3, static: false },
+    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'streak', x: 6, y: 17, w: 6, h: 3, minH: 3, minW: 3, static: false },
+    { i: 'weeklyProgress', x: 0, y: 21, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'weather', x: 6, y: 21, w: 6, h: 3, minH: 3, minW: 3, static: false },
+    { i: 'quickNotes', x: 0, y: 25, w: 6, h: 3, minH: 3, minW: 3, static: false },
+    { i: 'achievements', x: 6, y: 25, w: 6, h: 4, minH: 4, minW: 3, static: false },
   ];
 
   const [layout, setLayout] = useState(() => {
-    const saved = localStorage.getItem('widgetLayout_v7');
+    const saved = localStorage.getItem('widgetLayout_v8');
     if (saved) {
       const parsedSaved = JSON.parse(saved);
       // Merge saved layout with default layout to ensure all widgets have a position
-      // This fixes the issue where new widgets wouldn't appear if a layout was already saved
       const mergedLayout = defaultLayout.map(defaultItem => {
         const savedItem = parsedSaved.find((i: any) => i.i === defaultItem.i);
         return savedItem ? { ...defaultItem, ...savedItem } : defaultItem;
@@ -174,7 +174,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   // Save layout when it changes
   const handleLayoutChange = async (newLayout: any) => {
     setLayout(newLayout);
-    localStorage.setItem('widgetLayout_v7', JSON.stringify(newLayout));
+    localStorage.setItem('widgetLayout_v8', JSON.stringify(newLayout));
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -187,7 +187,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   };
 
   useEffect(() => {
-    localStorage.setItem('widgetLayout_v7', JSON.stringify(layout));
+    localStorage.setItem('widgetLayout_v8', JSON.stringify(layout));
   }, [layout]);
 
   // Listen for changes in widget preferences
@@ -973,7 +973,6 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
       ) : (
         <ResponsiveGridLayout
           className="layout"
-
           layouts={{
             lg: layout,
             md: layout,
@@ -989,7 +988,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           }}
           isDraggable={true}
           isResizable={true}
-          compactType="vertical"
+          compactType={null}
+          preventCollision={true}
           draggableHandle=".drag-handle"
           measureBeforeMount={true}
           useCSSTransforms={true}
