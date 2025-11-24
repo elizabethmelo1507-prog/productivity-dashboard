@@ -719,7 +719,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
     setIsAiTyping(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // WARNING: Hardcoding API keys is not recommended for production. Use environment variables.
+      const ai = new GoogleGenAI({ apiKey: "AIzaSyBsnsncqnJTugUmYi1lF0IWz6Nf-0TG95U" });
 
       // Coletando contexto atualizado
       // Use real events from Supabase
@@ -808,7 +809,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-1.5-flash',
         contents: [
           { role: 'user', parts: [{ text: systemPrompt + '\n\nUsuário: ' + userText }] }
         ]
