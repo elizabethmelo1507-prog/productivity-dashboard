@@ -137,98 +137,74 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
   const [dragOverWidget, setDragOverWidget] = useState<string | null>(null);
 
-  // Grid Layout state - defines position and size of each widget
-  // Organized in 2 columns (6 grid units each) to prevent overlapping
-  const defaultLayout = [
-    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2, minH: 2, minW: 6, static: false },
-    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'agenda', x: 0, y: 6, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3, minH: 3, minW: 3, static: false },
-    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3, minH: 3, minW: 3, static: false },
-    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'streak', x: 6, y: 17, w: 6, h: 3, minH: 3, minW: 3, static: false },
-    { i: 'weeklyProgress', x: 0, y: 20, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'weather', x: 6, y: 20, w: 6, h: 3, minH: 3, minW: 3, static: false },
-    { i: 'quickNotes', x: 0, y: 23, w: 6, h: 3, minH: 3, minW: 3, static: false },
-    { i: 'achievements', x: 6, y: 23, w: 6, h: 4, minH: 4, minW: 3, static: false },
+  // Grid Layout state - SIMPLIFIED AND FIXED
+  // Each widget has exact X,Y position to prevent overlaps
+  const getDefaultLayout = () => [
+    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2, minH: 2, minW: 6 },
+    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4, minH: 4, minW: 4 },
+    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4, minH: 4, minW: 4 },
+    { i: 'agenda', x: 0, y: 6, w: 6, h: 4, minH: 4, minW: 4 },
+    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4, minH: 4, minW: 4 },
+    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3, minH: 3, minW: 4 },
+    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3, minH: 3, minW: 4 },
+    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4, minH: 4, minW: 4 },
+    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 4, minH: 4, minW: 4 },
+    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4, minW: 4 },
+    { i: 'streak', x: 6, y: 17, w: 6, h: 3, minH: 3, minW: 4 },
+    { i: 'weeklyProgress', x: 0, y: 20, w: 6, h: 4, minH: 4, minW: 4 },
+    { i: 'weather', x: 6, y: 20, w: 6, h: 3, minH: 3, minW: 4 },
+    { i: 'quickNotes', x: 0, y: 23, w: 6, h: 3, minH: 3, minW: 4 },
+    { i: 'achievements', x: 6, y: 23, w: 6, h: 4, minH: 4, minW: 4 },
   ];
 
-  // FORCE CLEAN ALL OLD LAYOUTS - Critical fix for overlapping widgets
-  const CURRENT_LAYOUT_VERSION = 'v9_CLEAN';
-  const layoutVersionKey = 'widgetLayoutVersion';
+  // ALWAYS start with default layout - no localStorage on initialization
+  const [layout, setLayout] = useState(getDefaultLayout());
+  const [isLayoutLoaded, setIsLayoutLoaded] = useState(false);
 
-  // Check if we need to force reset
-  const needsReset = () => {
-    const savedVersion = localStorage.getItem(layoutVersionKey);
-    return savedVersion !== CURRENT_LAYOUT_VERSION;
-  };
+  // Load custom layout AFTER initial render
+  useEffect(() => {
+    if (isLayoutLoaded) return;
 
-  const [layout, setLayout] = useState(() => {
-    // STEP 1: Clean ALL old layout versions
-    ['widgetLayout_v1', 'widgetLayout_v2', 'widgetLayout_v3', 'widgetLayout_v4',
-      'widgetLayout_v5', 'widgetLayout_v6', 'widgetLayout_v7', 'widgetLayout_v8',
-      'widgetLayout', 'dashboardLayout'].forEach(key => {
-        localStorage.removeItem(key);
-      });
+    try {
+      const saved = localStorage.getItem('widgetLayout_v10');
+      if (saved) {
+        const parsed = JSON.parse(saved);
 
-    // STEP 2: Force reset if version changed
-    if (needsReset()) {
-      console.warn('Layout version changed - forcing clean reset');
-      localStorage.setItem(layoutVersionKey, CURRENT_LAYOUT_VERSION);
-      localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
-      return [...defaultLayout];
-    }
+        // Validate: ensure no overlaps
+        const positions = new Map();
+        let isValid = true;
 
-    // STEP 3: Try to load saved layout but validate it
-    const saved = localStorage.getItem('widgetLayout_v8');
-    if (saved) {
-      try {
-        const parsedSaved = JSON.parse(saved);
-
-        // Validate: check for overlaps
-        const hasOverlap = parsedSaved.some((item: any, index: number) => {
-          return parsedSaved.some((other: any, otherIndex: number) => {
-            if (index === otherIndex) return false;
-            // Check if widgets overlap
-            return (
-              item.x === other.x &&
-              item.y === other.y
-            );
-          });
-        });
-
-        if (hasOverlap) {
-          console.warn('Detected overlapping widgets - using default layout');
-          localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
-          return [...defaultLayout];
+        for (const item of parsed) {
+          const key = `${item.x}-${item.y}`;
+          if (positions.has(key)) {
+            console.error(`Invalid layout: overlap at ${key}`);
+            isValid = false;
+            break;
+          }
+          positions.set(key, item.i);
         }
 
-        // Layout is valid, merge with defaults
-        const mergedLayout = defaultLayout.map(defaultItem => {
-          const savedItem = parsedSaved.find((i: any) => i.i === defaultItem.i);
-          return savedItem ? { ...defaultItem, ...savedItem } : defaultItem;
-        });
-        return mergedLayout;
-      } catch (e) {
-        console.error('Error parsing saved layout:', e);
-        localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
-        return [...defaultLayout];
+        if (isValid && parsed.length === getDefaultLayout().length) {
+          console.log('Loading saved layout');
+          setLayout(parsed);
+        } else {
+          console.warn('Saved layout invalid, using default');
+          localStorage.removeItem('widgetLayout_v10');
+        }
       }
+    } catch (e) {
+      console.error('Error loading layout:', e);
     }
 
-    // No saved layout, use default
-    localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
-    return [...defaultLayout];
-  });
+    setIsLayoutLoaded(true);
+  }, [isLayoutLoaded]);
 
-  // Save layout when it changes
+  // Save layout when it changes (debounced)
   const handleLayoutChange = async (newLayout: any) => {
+    if (!isLayoutLoaded) return; // Don't save during initial load
+
     setLayout(newLayout);
-    localStorage.setItem('widgetLayout_v8', JSON.stringify(newLayout));
+    localStorage.setItem('widgetLayout_v10', JSON.stringify(newLayout));
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -240,70 +216,19 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
     }
   };
 
+  // Clean up old versions once
   useEffect(() => {
-    localStorage.setItem('widgetLayout_v8', JSON.stringify(layout));
-  }, [layout]);
-
-  // Force reset layout if corrupted (runs once on mount)
-  useEffect(() => {
-    const CURRENT_LAYOUT_VERSION = 'v9_CLEAN';
-    const layoutVersionKey = 'widgetLayoutVersion';
-    const savedVersion = localStorage.getItem(layoutVersionKey);
-
-    // If version doesn't match, force complete reset
-    if (savedVersion !== CURRENT_LAYOUT_VERSION) {
-      console.warn('FORCING LAYOUT RESET - Version mismatch');
-
-      // Clear everything
+    const cleanupDone = localStorage.getItem('layout_cleanup_v10');
+    if (!cleanupDone) {
+      console.log('Cleaning up old layouts...');
       ['widgetLayout_v1', 'widgetLayout_v2', 'widgetLayout_v3', 'widgetLayout_v4',
         'widgetLayout_v5', 'widgetLayout_v6', 'widgetLayout_v7', 'widgetLayout_v8',
-        'widgetLayout', 'dashboardLayout'].forEach(key => {
+        'widgetLayout_v9', 'widgetLayout', 'dashboardLayout', 'widgetLayoutVersion'].forEach(key => {
           localStorage.removeItem(key);
         });
-
-      // Set new version and layout
-      localStorage.setItem(layoutVersionKey, CURRENT_LAYOUT_VERSION);
-      localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
-      setLayout([...defaultLayout]);
-      return;
+      localStorage.setItem('layout_cleanup_v10', 'done');
     }
-
-    // Double check for overlaps
-    const checkLayout = () => {
-      const saved = localStorage.getItem('widgetLayout_v8');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-
-          // Check if any widgets are overlapping
-          const positions = new Map();
-          let hasOverlap = false;
-
-          parsed.forEach((item: any) => {
-            const key = `${item.x}-${item.y}`;
-            if (positions.has(key)) {
-              hasOverlap = true;
-              console.warn(`Overlap detected at position ${key}`);
-            }
-            positions.set(key, item.i);
-          });
-
-          if (hasOverlap) {
-            console.warn('Detected overlapping widgets, resetting to default layout');
-            localStorage.removeItem('widgetLayout_v8');
-            localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
-            setLayout([...defaultLayout]);
-          }
-        } catch (e) {
-          console.error('Error checking layout:', e);
-          localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
-          setLayout([...defaultLayout]);
-        }
-      }
-    };
-
-    checkLayout();
-  }, []); // Run only once on mount
+  }, []);
 
   // Listen for changes in widget preferences
   useEffect(() => {
@@ -1061,11 +986,13 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
               if (window.confirm('Deseja restaurar o layout padrão? Isso irá reorganizar todos os widgets.')) {
                 // Clear all layout versions
                 ['widgetLayout_v1', 'widgetLayout_v2', 'widgetLayout_v3', 'widgetLayout_v4',
-                  'widgetLayout_v5', 'widgetLayout_v6', 'widgetLayout_v7', 'widgetLayout_v8'].forEach(key => {
+                  'widgetLayout_v5', 'widgetLayout_v6', 'widgetLayout_v7', 'widgetLayout_v8',
+                  'widgetLayout_v9', 'widgetLayout_v10'].forEach(key => {
                     localStorage.removeItem(key);
                   });
-                setLayout([...defaultLayout]);
-                localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
+                const freshLayout = getDefaultLayout();
+                setLayout([...freshLayout]);
+                localStorage.setItem('widgetLayout_v10', JSON.stringify(freshLayout));
                 window.location.reload();
               }
             }}
