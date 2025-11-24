@@ -184,6 +184,44 @@ body,
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
+/* Desktop Grid Layout - Preserve react-grid-layout behavior */
+@media (min-width: 1024px) {
+    .react-grid-layout {
+        position: relative;
+    }
+
+    .react-grid-item {
+        position: absolute;
+        transition: all 200ms ease;
+        transition-property: left, top, width, height;
+    }
+
+    .react-grid-item.static {
+        position: absolute;
+    }
+
+    .react-grid-item.react-draggable-dragging {
+        transition: none;
+        z-index: 100;
+    }
+
+    .react-grid-item.dropping {
+        visibility: hidden;
+    }
+
+    .react-grid-item.react-grid-placeholder {
+        background: rgba(139, 92, 246, 0.2);
+        opacity: 0.2;
+        transition-duration: 100ms;
+        z-index: 2;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+    }
+}
+
 /* Mobile Grid Layout Fix */
 @media (max-width: 1023px) {
     .react-grid-layout {
