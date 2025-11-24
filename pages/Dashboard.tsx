@@ -139,32 +139,32 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
 
   // Grid Layout state - defines position and size of each widget
   const defaultLayout = [
-    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2, minH: 2 },
-    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4, minH: 4 },
-    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4, minH: 4 },
-    { i: 'agenda', x: 0, y: 6, w: 6, h: 4, minH: 4 },
-    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4, minH: 4 },
-    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3, minH: 3 },
-    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3, minH: 3 },
-    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4, minH: 4 },
-    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 3, minH: 3 },
-    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4 },
-    { i: 'streak', x: 6, y: 17, w: 3, h: 3, minH: 3 },
-    { i: 'weeklyProgress', x: 9, y: 17, w: 3, h: 4, minH: 4 },
-    { i: 'weather', x: 0, y: 20, w: 3, h: 3, minH: 3 },
-    { i: 'quickNotes', x: 3, y: 20, w: 6, h: 3, minH: 3 },
-    { i: 'achievements', x: 9, y: 21, w: 3, h: 4, minH: 4 },
+    { i: 'urgentBanner', x: 0, y: 0, w: 12, h: 2, minH: 2, minW: 3 },
+    { i: 'productivityChart', x: 0, y: 2, w: 6, h: 4, minH: 4, minW: 3 },
+    { i: 'tasksToday', x: 6, y: 2, w: 6, h: 4, minH: 4, minW: 3 },
+    { i: 'agenda', x: 0, y: 6, w: 6, h: 4, minH: 4, minW: 3 },
+    { i: 'aiAssistant', x: 6, y: 6, w: 6, h: 4, minH: 4, minW: 3 },
+    { i: 'financialSummary', x: 0, y: 10, w: 6, h: 3, minH: 3, minW: 3 },
+    { i: 'motivationalQuote', x: 6, y: 10, w: 6, h: 3, minH: 3, minW: 3 },
+    { i: 'quickStats', x: 0, y: 13, w: 6, h: 4, minH: 4, minW: 3 },
+    { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 3, minH: 3, minW: 3 },
+    { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4, minW: 3 },
+    { i: 'streak', x: 6, y: 17, w: 3, h: 3, minH: 3, minW: 3 },
+    { i: 'weeklyProgress', x: 9, y: 17, w: 3, h: 4, minH: 4, minW: 3 },
+    { i: 'weather', x: 0, y: 20, w: 3, h: 3, minH: 3, minW: 3 },
+    { i: 'quickNotes', x: 3, y: 20, w: 6, h: 3, minH: 3, minW: 3 },
+    { i: 'achievements', x: 9, y: 21, w: 3, h: 4, minH: 4, minW: 3 },
   ];
 
   const [layout, setLayout] = useState(() => {
-    const saved = localStorage.getItem('widgetLayout_v4');
+    const saved = localStorage.getItem('widgetLayout_v5');
     if (saved) {
       const parsedSaved = JSON.parse(saved);
       // Merge saved layout with default layout to ensure all widgets have a position
       // This fixes the issue where new widgets wouldn't appear if a layout was already saved
       const mergedLayout = defaultLayout.map(defaultItem => {
-        const savedItem = parsedSaved.find((p: any) => p.i === defaultItem.i);
-        return savedItem || defaultItem;
+        const savedItem = parsedSaved.find((i: any) => i.i === defaultItem.i);
+        return savedItem ? { ...defaultItem, ...savedItem } : defaultItem;
       });
       return mergedLayout;
     }
@@ -174,7 +174,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
   // Save layout when it changes
   const handleLayoutChange = async (newLayout: any) => {
     setLayout(newLayout);
-    localStorage.setItem('widgetLayout_v4', JSON.stringify(newLayout));
+    localStorage.setItem('widgetLayout_v5', JSON.stringify(newLayout));
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -186,9 +186,9 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
     }
   };
 
-  // ... later in JSX ...
-  // inside <ResponsiveGridLayout>
-  // replace onLayoutChange prop usage
+  useEffect(() => {
+    localStorage.setItem('widgetLayout_v5', JSON.stringify(layout));
+  }, [layout]);
 
   // Listen for changes in widget preferences
   useEffect(() => {
@@ -977,7 +977,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           layouts={{
             lg: layout,
             md: layout,
-            sm: layout.map(item => ({ ...item, x: 0, w: 12 })),
+            sm: layout,
             xs: layout.map(item => ({ ...item, x: 0, w: 12 })),
             xxs: layout.map(item => ({ ...item, x: 0, w: 12 }))
           }}
@@ -985,12 +985,12 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
           rowHeight={80}
           onLayoutChange={(newLayout) => {
-            if (window.innerWidth >= 768) {
+            if (window.innerWidth >= 640) {
               handleLayoutChange(newLayout);
             }
           }}
-          isDraggable={window.innerWidth >= 768}
-          isResizable={window.innerWidth >= 768}
+          isDraggable={window.innerWidth >= 640}
+          isResizable={window.innerWidth >= 640}
           compactType="vertical"
           draggableHandle=".drag-handle"
           measureBeforeMount={true}
