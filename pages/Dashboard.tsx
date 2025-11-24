@@ -1045,8 +1045,6 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           }}
           isDraggable={true}
           isResizable={true}
-          compactType="vertical"
-          allowOverlap={false}
           draggableHandle=".drag-handle"
           measureBeforeMount={true}
           useCSSTransforms={true}
