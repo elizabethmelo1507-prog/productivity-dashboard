@@ -55,7 +55,27 @@ const Settings: React.FC = () => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      localStorage.removeItem('isAuthenticated');
+      // Clear ALL user-specific data from localStorage
+      const keysToRemove = [
+        'isAuthenticated',
+        'userName',
+        'userEmail',
+        'userBio',
+        'userLocation',
+        'profileImage',
+        'theme',
+        'enabledWidgets',
+        'widgetLayout_v3',
+        'dashboardLayout',
+        'dashboardOrder',
+        'emailNotifications',
+        'pushNotifications',
+        'taskReminders',
+        'weeklyReport',
+        'twoFactorEnabled'
+      ];
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+
       navigate('/login');
     } catch (error) {
       console.error('Error logging out:', error);
@@ -104,13 +124,8 @@ const Settings: React.FC = () => {
         if (user) {
           try {
             console.log('Tentando salvar avatar para usuário:', user.id);
-            const { error } = await updateProfile(user.id, { avatar_url: imageData });
-            if (error) {
-              console.error('Erro detalhado ao salvar avatar:', error);
-              alert(`Erro ao salvar foto: ${error.message || JSON.stringify(error)}`);
-            } else {
-              console.log('Avatar salvo com sucesso!');
-            }
+            await updateProfile(user.id, { avatar_url: imageData });
+            console.log('Avatar salvo com sucesso!');
           } catch (error: any) {
             console.error('Exceção ao salvar avatar:', error);
 

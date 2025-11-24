@@ -293,6 +293,15 @@ export default function App() {
         setTransactions([]);
         setEvents([]);
         setPomodoros([]);
+
+        // Clear sensitive user data from localStorage
+        const keysToRemove = [
+          'userName', 'userEmail', 'userBio', 'userLocation', 'profileImage',
+          'theme', 'enabledWidgets', 'widgetLayout_v3', 'dashboardLayout',
+          'dashboardOrder', 'emailNotifications', 'pushNotifications',
+          'taskReminders', 'weeklyReport', 'twoFactorEnabled'
+        ];
+        keysToRemove.forEach(key => localStorage.removeItem(key));
       }
     });
 
