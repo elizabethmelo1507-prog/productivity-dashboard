@@ -67,9 +67,11 @@ const Login: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const email = (e.currentTarget as HTMLFormElement).email.value;
-    const password = (e.currentTarget as HTMLFormElement).password.value;
-    const confirmPassword = (e.currentTarget as HTMLFormElement).confirmPassword?.value;
+    const form = e.currentTarget as HTMLFormElement;
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword?.value;
+    const fullName = form.fullName?.value;
 
     if (password !== confirmPassword) {
       alert('As senhas não coincidem!');
@@ -83,31 +85,41 @@ const Login: React.FC = () => {
       return;
     }
 
-    const { error, data } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-        data: {
-          full_name: (e.currentTarget as HTMLFormElement).fullName?.value
+    try {
+      const { error, data } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+          data: {
+            full_name: fullName
+          }
         }
+      });
+
+      if (error) throw error;
+
+      // Save name to localStorage for immediate use
+      if (fullName) {
+        localStorage.setItem('userName', fullName);
       }
-    });
 
-    if (error) {
-      alert(error.message);
+      if (data.session) {
+        // User is signed in immediately (Email confirmation disabled)
+        localStorage.setItem('isAuthenticated', 'true');
+        alert('Conta criada com sucesso! Bem-vindo(a).');
+        navigate('/');
+      } else {
+        // Email confirmation required
+        alert('Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro antes de fazer login.');
+        setIsRegisterMode(false);
+      }
+    } catch (error: any) {
+      console.error("Erro no cadastro:", error);
+      alert(error.message || 'Erro ao criar conta. Tente novamente.');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Save name to localStorage for immediate use
-    if ((e.currentTarget as HTMLFormElement).fullName?.value) {
-      localStorage.setItem('userName', (e.currentTarget as HTMLFormElement).fullName.value);
-    }
-
-    alert('Conta criada com sucesso! Verifique seu e-mail para confirmar.');
-    setIsRegisterMode(false);
-    setLoading(false);
   };
 
   return (
