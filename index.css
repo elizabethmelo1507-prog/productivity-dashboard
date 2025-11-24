@@ -1,0 +1,185 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Sora', sans-serif;
+}
+
+/* Light Theme - Default */
+:root:not(.dark) {
+    --bg-primary: #F0F2F5;
+    --bg-surface: #FFFFFF;
+    --text-primary: #18181B;
+    --text-secondary: #71717A;
+    --border-color: #E4E4E7;
+}
+
+/* Dark Theme */
+:root.dark {
+    --bg-primary: #18181B;
+    --bg-surface: #27272A;
+    --text-primary: #FAFAFA;
+    --text-secondary: #A1A1AA;
+    --border-color: #3F3F46;
+}
+
+/* Apply theme colors to Tailwind classes */
+.bg-background-light {
+    background-color: #F0F2F5 !important;
+}
+
+.dark .bg-background-light {
+    background-color: #18181B !important;
+}
+
+.bg-background-dark {
+    background-color: #18181B !important;
+}
+
+.dark .bg-background-dark {
+    background-color: #18181B !important;
+}
+
+.bg-surface-light {
+    background-color: #FFFFFF !important;
+}
+
+.dark .bg-surface-light {
+    background-color: #27272A !important;
+}
+
+.bg-surface-dark {
+    background-color: #27272A !important;
+}
+
+.dark .bg-surface-dark {
+    background-color: #27272A !important;
+}
+
+.text-text-light {
+    color: #18181B !important;
+}
+
+.dark .text-text-light {
+    color: #FAFAFA !important;
+}
+
+.text-text-dark {
+    color: #FAFAFA !important;
+}
+
+.dark .text-text-dark {
+    color: #FAFAFA !important;
+}
+
+.text-subtext-light {
+    color: #71717A !important;
+}
+
+.dark .text-subtext-light {
+    color: #A1A1AA !important;
+}
+
+.text-subtext-dark {
+    color: #A1A1AA !important;
+}
+
+.dark .text-subtext-dark {
+    color: #A1A1AA !important;
+}
+
+.border-border-light {
+    border-color: #E4E4E7 !important;
+}
+
+.dark .border-border-light {
+    border-color: #3F3F46 !important;
+}
+
+.border-border-dark {
+    border-color: #3F3F46 !important;
+}
+
+.dark .border-border-dark {
+    border-color: #3F3F46 !important;
+}
+
+/* Light mode overrides */
+:root:not(.dark) .bg-background-dark {
+    background-color: #F0F2F5 !important;
+}
+
+:root:not(.dark) .bg-surface-dark {
+    background-color: #FFFFFF !important;
+}
+
+:root:not(.dark) .text-text-dark {
+    color: #18181B !important;
+}
+
+:root:not(.dark) .text-subtext-dark {
+    color: #71717A !important;
+}
+
+:root:not(.dark) .border-border-dark {
+    border-color: #E4E4E7 !important;
+}
+
+/* Scrollbar Styling */
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Animations */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+}
+
+/* Smooth transitions for theme changes */
+body,
+.bg-background-dark,
+.bg-surface-dark,
+.text-text-dark,
+.text-subtext-dark {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
