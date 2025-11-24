@@ -207,6 +207,41 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
     localStorage.setItem('widgetLayout_v8', JSON.stringify(layout));
   }, [layout]);
 
+  // Force reset layout if corrupted (runs once on mount)
+  useEffect(() => {
+    const checkLayout = () => {
+      const saved = localStorage.getItem('widgetLayout_v8');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          // Check if any widgets are overlapping by checking if any two widgets
+          // have the same x,y position
+          const positions = new Set();
+          let hasOverlap = false;
+
+          parsed.forEach((item: any) => {
+            const key = `${item.x}-${item.y}`;
+            if (positions.has(key)) {
+              hasOverlap = true;
+            }
+            positions.add(key);
+          });
+
+          if (hasOverlap) {
+            console.warn('Detected overlapping widgets, resetting to default layout');
+            localStorage.removeItem('widgetLayout_v8');
+            setLayout([...defaultLayout]);
+            localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
+          }
+        } catch (e) {
+          console.error('Error checking layout:', e);
+        }
+      }
+    };
+
+    checkLayout();
+  }, []); // Run only once on mount
+
   // Listen for changes in widget preferences
   useEffect(() => {
     const handleStorageChange = () => {
@@ -1010,8 +1045,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
           }}
           isDraggable={true}
           isResizable={true}
-          compactType={null}
-          preventCollision={true}
+          compactType="vertical"
+          allowOverlap={false}
           draggableHandle=".drag-handle"
           measureBeforeMount={true}
           useCSSTransforms={true}
