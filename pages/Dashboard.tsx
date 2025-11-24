@@ -151,23 +151,40 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
     { i: 'dailyGoal', x: 6, y: 13, w: 6, h: 4, minH: 4, minW: 3, static: false },
     { i: 'pomodoroTimer', x: 0, y: 17, w: 6, h: 4, minH: 4, minW: 3, static: false },
     { i: 'streak', x: 6, y: 17, w: 6, h: 3, minH: 3, minW: 3, static: false },
-    { i: 'weeklyProgress', x: 0, y: 21, w: 6, h: 4, minH: 4, minW: 3, static: false },
-    { i: 'weather', x: 6, y: 21, w: 6, h: 3, minH: 3, minW: 3, static: false },
-    { i: 'quickNotes', x: 0, y: 25, w: 6, h: 3, minH: 3, minW: 3, static: false },
-    { i: 'achievements', x: 6, y: 25, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'weeklyProgress', x: 0, y: 20, w: 6, h: 4, minH: 4, minW: 3, static: false },
+    { i: 'weather', x: 6, y: 20, w: 6, h: 3, minH: 3, minW: 3, static: false },
+    { i: 'quickNotes', x: 0, y: 23, w: 6, h: 3, minH: 3, minW: 3, static: false },
+    { i: 'achievements', x: 6, y: 23, w: 6, h: 4, minH: 4, minW: 3, static: false },
   ];
 
   const [layout, setLayout] = useState(() => {
+    // Clean up old layout versions
+    ['widgetLayout_v1', 'widgetLayout_v2', 'widgetLayout_v3', 'widgetLayout_v4',
+      'widgetLayout_v5', 'widgetLayout_v6', 'widgetLayout_v7'].forEach(key => {
+        localStorage.removeItem(key);
+      });
+
     const saved = localStorage.getItem('widgetLayout_v8');
     if (saved) {
-      const parsedSaved = JSON.parse(saved);
-      // Merge saved layout with default layout to ensure all widgets have a position
-      const mergedLayout = defaultLayout.map(defaultItem => {
-        const savedItem = parsedSaved.find((i: any) => i.i === defaultItem.i);
-        return savedItem ? { ...defaultItem, ...savedItem } : defaultItem;
-      });
-      return mergedLayout;
+      try {
+        const parsedSaved = JSON.parse(saved);
+        // Validate that the saved layout has the correct structure
+        const isValid = parsedSaved.every((item: any) =>
+          item.i && typeof item.x === 'number' && typeof item.y === 'number'
+        );
+
+        if (isValid) {
+          const mergedLayout = defaultLayout.map(defaultItem => {
+            const savedItem = parsedSaved.find((i: any) => i.i === defaultItem.i);
+            return savedItem ? { ...defaultItem, ...savedItem } : defaultItem;
+          });
+          return mergedLayout;
+        }
+      } catch (e) {
+        console.error('Error parsing saved layout:', e);
+      }
     }
+    // If no valid saved layout, return fresh default
     return defaultLayout;
   });
 
@@ -943,9 +960,14 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
 
           <button
             onClick={() => {
-              if (window.confirm('Deseja restaurar o layout padrão?')) {
-                setLayout(defaultLayout);
-                localStorage.removeItem('widgetLayout_v3');
+              if (window.confirm('Deseja restaurar o layout padrão? Isso irá reorganizar todos os widgets.')) {
+                // Clear all layout versions
+                ['widgetLayout_v1', 'widgetLayout_v2', 'widgetLayout_v3', 'widgetLayout_v4',
+                  'widgetLayout_v5', 'widgetLayout_v6', 'widgetLayout_v7', 'widgetLayout_v8'].forEach(key => {
+                    localStorage.removeItem(key);
+                  });
+                setLayout([...defaultLayout]);
+                localStorage.setItem('widgetLayout_v8', JSON.stringify(defaultLayout));
                 window.location.reload();
               }
             }}
