@@ -952,11 +952,22 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
       ) : (
         <ResponsiveGridLayout
           className="layout"
-          layouts={{ lg: layout, md: layout, sm: layout.map(item => ({ ...item, x: 0, w: 12 })), xs: layout.map(item => ({ ...item, x: 0, w: 12 })) }}
-          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+          layouts={{
+            lg: layout,
+            md: layout,
+            sm: layout.map(item => ({ ...item, x: 0, w: 12 })),
+            xs: layout.map(item => ({ ...item, x: 0, w: 12 })),
+            xxs: layout.map(item => ({ ...item, x: 0, w: 12 }))
+          }}
+          breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 480, xxs: 0 }}
           cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
           rowHeight={80}
-          onLayoutChange={onLayoutChange}
+          onLayoutChange={(newLayout, allLayouts) => {
+            // Only save layout changes for desktop
+            if (window.innerWidth >= 1024) {
+              onLayoutChange(newLayout);
+            }
+          }}
           isDraggable={true}
           isResizable={true}
           compactType="vertical"
