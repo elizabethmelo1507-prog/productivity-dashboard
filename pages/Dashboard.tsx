@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import { GoogleGenAI } from "@google/genai";
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 
@@ -719,8 +718,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
     setIsAiTyping(true);
 
     try {
-      // WARNING: Hardcoding API keys is not recommended for production. Use environment variables.
-      const ai = new GoogleGenAI({ apiKey: "AIzaSyBsnsncqnJTugUmYi1lF0IWz6Nf-0TG95U" });
+      // Using direct REST API to avoid SDK compatibility issues in the browser
+      const API_KEY = "AIzaSyBsnsncqnJTugUmYi1lF0IWz6Nf-0TG95U";
 
       // Coletando contexto atualizado
       // Use real events from Supabase
@@ -808,14 +807,24 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
         - Responda sempre em Português do Brasil.
       `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
-        contents: [
-          { role: 'user', parts: [{ text: systemPrompt + '\n\nUsuário: ' + userText }] }
-        ]
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: systemPrompt + '\n\nUsuário: ' + userText }]
+          }]
+        })
       });
 
-      const aiResponseText = response.text || "Desculpe, não consegui processar sua solicitação no momento.";
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const aiResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Desculpe, não consegui processar sua solicitação no momento.";
 
       const aiMsg: Message = { id: Date.now() + 1, role: 'ai', text: aiResponseText };
       setChatMessages(prev => [...prev, aiMsg]);
