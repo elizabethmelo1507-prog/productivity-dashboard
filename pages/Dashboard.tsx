@@ -952,6 +952,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
       ) : (
         <ResponsiveGridLayout
           className="layout"
+          style={{ width: '100%', marginLeft: 0 }}
           layouts={{
             lg: layout,
             md: layout,
@@ -968,8 +969,8 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
               onLayoutChange(newLayout);
             }
           }}
-          isDraggable={true}
-          isResizable={true}
+          isDraggable={window.innerWidth >= 1024}
+          isResizable={window.innerWidth >= 1024}
           compactType="vertical"
           preventCollision={false}
           draggableHandle=".drag-handle"
