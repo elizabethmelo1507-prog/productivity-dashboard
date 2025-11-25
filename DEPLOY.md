@@ -72,17 +72,30 @@ Valor: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1
 
 ---
 
-## 🔧 Configurações Adicionais
+## ⚠️ IMPORTANTE: Configuração do Supabase (OBRIGATÓRIO!)
 
-### Atualizar URL no Supabase
+**Este passo é ESSENCIAL para que outras pessoas consigam acessar o app!**
 
-Depois do deploy, você precisa adicionar a URL da Vercel no Supabase:
+Depois do primeiro deploy, você DEVE configurar URLs permitidas no Supabase:
 
 1. Acesse: https://app.supabase.com/project/fumsdepbiyvgmcjbrciz/auth/url-configuration
-2. Em **"Site URL"**, adicione: `https://productivity-dashboard-xxx.vercel.app`
+2. Em **"Site URL"**, adicione sua URL da Vercel: `https://seu-app.vercel.app`
 3. Em **"Redirect URLs"**, adicione:
-   - `https://productivity-dashboard-xxx.vercel.app/**`
-   - `https://productivity-dashboard-xxx.vercel.app/reset-password`
+   - `https://seu-app.vercel.app/**`
+   - `https://seu-app.vercel.app/reset-password`
+   - `http://localhost:3000/**` (para desenvolvimento local)
+
+**⚠️ SEM ISSO, A AUTENTICAÇÃO NÃO FUNCIONA PARA OUTROS USUÁRIOS!**
+
+### CORS Configuration (Em caso de erros de CORS)
+
+Se você receber erros de CORS no console:
+
+1. No Supabase, vá em **Settings** > **API**
+2. Em **CORS Settings**, adicione sua URL da Vercel
+3. Salve as configurações
+
+
 
 ### Domínio Personalizado (Opcional)
 
