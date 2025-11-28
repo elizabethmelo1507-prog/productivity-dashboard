@@ -56,7 +56,7 @@
    **Variável 3:**
    ```
    Key: VITE_GEMINI_API_KEY
-   Value: AIzaSyBsnsncqnJTugUmYi1lF0IWz6Nf-0TG95U
+   Value: AIzaSyAFiYHbLi2M_rMcVO8l_IwXzVzNzZIpxCM
    ```
 
 3. **Salve:**

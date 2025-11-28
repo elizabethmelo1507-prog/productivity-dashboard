@@ -678,8 +678,11 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks, setTasks, transactions, ev
     setIsAiTyping(true);
 
     try {
-      // Using direct REST API to avoid SDK compatibility issues in the browser
-      const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyBsnsncqnJTugUmYi1lF0IWz6Nf-0TG95U";
+      const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+      if (!API_KEY) {
+        throw new Error("Chave API não configurada. Configure a variável VITE_GEMINI_API_KEY.");
+      }
 
       // Coletando contexto atualizado
       // Use real events from Supabase
